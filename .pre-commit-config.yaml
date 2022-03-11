@@ -1,0 +1,50 @@
+---
+
+repos:
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.26.3
+    hooks:
+      - id: yamllint
+        files: \.(yaml|yml)$
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.31.1
+    hooks:
+      - id: markdownlint
+        entry: markdownlint
+        language: node
+        types: [markdown]
+        minimum_pre_commit_version: 0.15.0
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-json
+      - id: detect-aws-credentials
+        args: [--allow-missing-credentials]
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=no]
+      - id: no-commit-to-branch
+        args: [--branch, main]
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.8.0
+    hooks:
+      - id: hadolint
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v7.32.0
+    hooks:
+      - id: eslint
+        additional_dependencies:
+          - eslint@7.32.0
+          - eslint-config-standard@16.0.3
+          - eslint-plugin-import@2.25.4
+          - eslint-plugin-node@11.1.0
+          - eslint-plugin-promise@6.0.0
+        files: \.(js)$
