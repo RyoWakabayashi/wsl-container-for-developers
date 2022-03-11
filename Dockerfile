@@ -8,10 +8,7 @@ ARG GID=1000
 ENV DEBIAN_FRONTEND=noninteractive
 ENV USER $USERNAME
 ENV HOME /home/${USER}
-ENV SHELL /bin/bash
 ENV PW ubuntu
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Install essentials
 # hadolint ignore=DL3008
@@ -50,39 +47,53 @@ RUN apt-get update -q && \
     git \
     curl \
     wget \
-    vim && \
+    vim \
+    stow && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Set lagugae to Japanese
 # hadolint ignore=DL3008
 RUN apt-get update -q && \
-    apt-get install --no-install-recommends -y \
-    language-pack-ja && \
+    apt-get install --no-install-recommends -y language-pack-ja && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     update-locale LANG=ja_JP.UTF8
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup User
 RUN groupadd -g $GID $GROUPNAME && \
     useradd -l -m -s /bin/bash -u $UID -g $GID $USERNAME && \
     gpasswd -a ${USER} sudo && \
     echo "${USER}:${PW}" | chpasswd && \
-    sed -i.bak -r s#${HOME}:\(.+\)#${HOME}:${SHELL}# /etc/passwd && \
-    echo "${USER} ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
+    sed -i.bak -r s#${HOME}:\(.+\)#${HOME}:/bin/bash# /etc/passwd && \
+    sed -i.bak -r s#${HOME}:\(.+\)#${HOME}:/usr/local/bin/zsh# /etc/passwd && \
+    echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Install zsh
+# hadolint ignore=DL3008
+RUN apt-get update -q && \
+    apt-get install --no-install-recommends -y zsh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 USER ${USER}
 
-WORKDIR ${HOME}
+# Install oh-my-zsh
+RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Install Homebrew
 # hadolint ignore=DL3059
-RUN ${SHELL} -c \
+RUN /bin/bash -c \
     "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && \
-    echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
+    echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.zshrc
 
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin+:$PATH"
+ENV PATH "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin+:$PATH"
+
+# SSH Agent
+RUN echo "eval $(ssh-agent)" >> ~/.zshrc
 
 # Install AWS CLI
 # hadolint ignore=DL3059
@@ -90,11 +101,11 @@ RUN brew install awscli
 
 # Install ASDF
 # hadolint ignore=DL3059
-RUN brew install asdf
+RUN brew install asdf && \
+    echo "source $(brew --prefix asdf)/asdf.sh" >> ~/.zshrc
 
 # Install GitHub CLI
 # hadolint ignore=DL3059
 RUN brew install gh
 
-# SSH Agent
-RUN echo "eval `ssh-agent`" >> ~/.bash_profile
+WORKDIR ${HOME}
