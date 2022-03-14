@@ -91,6 +91,24 @@ RUN apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install Docker
+# hadolint ignore=DL3008
+RUN export DOCKER_GPG_KEY=/usr/share/keyrings/docker-archive-keyring.gpg && \
+    export DOCKER_URL=https://download.docker.com/linux/ubuntu &&\
+    curl -fsSL "${DOCKER_URL}/gpg" | \
+    gpg --dearmor -o "${DOCKER_GPG_KEY}" && \
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=${DOCKER_GPG_KEY}] ${DOCKER_URL} $(lsb_release -cs) stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update -q && \
+    apt-get install --no-install-recommends -y \
+    docker-ce \
+    docker-ce-cli \
+    containerd.io && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    usermod -aG docker ${USER}
+
 USER ${USER}
 
 # Install oh-my-zsh
@@ -120,5 +138,11 @@ RUN brew install asdf && \
 # Install GitHub CLI
 # hadolint ignore=DL3059
 RUN brew install gh
+
+# Run Docker on login
+RUN echo 'service docker status > /dev/null 2>&1' >> ~/.zshrc && \
+    echo 'if [ $? != 0 ]; then' >> ~/.zshrc && \
+    echo '  sudo service docker start' >> ~/.zshrc && \
+    echo 'fi' >> ~/.zshrc
 
 WORKDIR ${HOME}

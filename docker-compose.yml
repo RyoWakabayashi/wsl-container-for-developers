@@ -2,7 +2,7 @@ version: "3"
 
 services:
   asdf:
-    build:
+    dev:
       context: .
       args:
         - PROXY=${http_proxy}
