@@ -25,10 +25,10 @@ RUN :  \
     } | tee /etc/apt/apt.conf
 
 # Set root proxy
-RUN echo "export http_proxy=$http_proxy" >> ~/.bashrc && \
-    echo "export https_proxy=$http_proxy" >> ~/.bashrc && \
-    echo "export HTTP_PROXY=$http_proxy" >> ~/.bashrc && \
-    echo "export HTTPS_PROXY=$http_proxy" >> ~/.bashrc
+RUN echo "export http_proxy=$http_proxy" >> /root/.bashrc && \
+    echo "export https_proxy=$http_proxy" >> /root/.bashrc && \
+    echo "export HTTP_PROXY=$http_proxy" >> /root/.bashrc && \
+    echo "export HTTPS_PROXY=$http_proxy" >> /root/.bashrc
 
 # Install essentials
 # hadolint ignore=DL3008
