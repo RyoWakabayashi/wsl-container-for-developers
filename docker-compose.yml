@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  asdf:
+  dev:
     build: .
     tty: true
     volumes:
