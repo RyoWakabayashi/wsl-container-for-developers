@@ -109,10 +109,33 @@ RUN export DOCKER_GPG_KEY=/usr/share/keyrings/docker-archive-keyring.gpg && \
     rm -rf /var/lib/apt/lists/* && \
     usermod -aG docker ${USER}
 
+# Set docker proxy
+RUN export DOCKER_DEFAULT=/etc/default/docker && \
+    echo "export http_proxy=$http_proxy" >> $DOCKER_DEFAULT && \
+    echo "export https_proxy=$http_proxy" >> $DOCKER_DEFAULT
+
 USER ${USER}
 
 # Install oh-my-zsh
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Set user proxy
+RUN echo "export http_proxy=$http_proxy" >> ~/.zshrc && \
+    echo "export https_proxy=$http_proxy" >> ~/.zshrc && \
+    echo "export HTTP_PROXY=$http_proxy" >> ~/.zshrc && \
+    echo "export HTTPS_PROXY=$http_proxy" >> ~/.zshrc
+
+# Set docker proxy
+RUN mkdir ~/.docker && \
+    export DOCKER_CONFIG=~/.docker/config.json && \
+    echo "{" >> $DOCKER_CONFIG && \
+    echo "  \"proxies\": {" >> $DOCKER_CONFIG && \
+    echo "    \"default\": {" >> $DOCKER_CONFIG && \
+    echo "      \"httpProxy\": \"${http_proxy}\"," >> $DOCKER_CONFIG && \
+    echo "      \"httpsProxy\": \"${http_proxy}\"" >> $DOCKER_CONFIG && \
+    echo "    }" >> $DOCKER_CONFIG && \
+    echo "  }" >> $DOCKER_CONFIG && \
+    echo "}" >> $DOCKER_CONFIG
 
 # Install Homebrew
 # hadolint ignore=DL3059
