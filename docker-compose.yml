@@ -2,8 +2,14 @@ version: "3"
 
 services:
   asdf:
-    build: .
+    build:
+      context: .
+      args:
+        - PROXY=${http_proxy}
     tty: true
+    environment:
+      - http_proxy
+      - https_proxy
     volumes:
       - .:/workspace:cached
       - $HOME/.aws/credentials:/home/ubuntu/.aws/credentials:ro

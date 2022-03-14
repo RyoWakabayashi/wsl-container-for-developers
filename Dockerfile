@@ -1,14 +1,28 @@
 FROM ubuntu:20.04
 
+ARG PROXY
+
 ARG USERNAME=ubuntu
 ARG GROUPNAME=ubuntu
 ARG UID=1000
 ARG GID=1000
 
+ENV http_proxy $PROXY
+ENV https_proxy $PROXY
+ENV HTTP_PROXY $PROXY
+ENV HTTPS_PROXY $PROXY
+
 ENV DEBIAN_FRONTEND=noninteractive
 ENV USER $USERNAME
 ENV HOME /home/${USER}
 ENV PW ubuntu
+
+# hadolint ignore=DL4006
+RUN :  \
+    && { \
+    echo 'Acquire::http:proxy "'${http_proxy}'";'; \
+    echo 'Acquire::https:proxy "'${https_proxy}'";'; \
+    } | tee /etc/apt/apt.conf
 
 # Install essentials
 # hadolint ignore=DL3008
