@@ -44,6 +44,11 @@ RUN apt-get update -q && \
 # hadolint ignore=DL3008
 RUN apt-get update -q && \
     apt-get install --no-install-recommends -y \
+    ubuntu-wsl \
+    iputils-ping \
+    net-tools \
+    dnsutils \
+    netcat \
     git \
     curl \
     wget \
@@ -52,7 +57,7 @@ RUN apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set lagugae to Japanese
+# Set laguage to Japanese
 # hadolint ignore=DL3008
 RUN apt-get update -q && \
     apt-get install --no-install-recommends -y language-pack-ja && \
@@ -90,10 +95,15 @@ RUN export DOCKER_GPG_KEY=/usr/share/keyrings/docker-archive-keyring.gpg && \
     apt-get install --no-install-recommends -y \
     docker-ce \
     docker-ce-cli \
+    docker-compose \
     containerd.io && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     usermod -aG docker ${USER}
+
+# Add WSL config
+RUN echo "[user]" >> /etc/wsl.conf && \
+    echo "default=${USER}" >> /etc/wsl.conf
 
 USER ${USER}
 
