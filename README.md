@@ -7,7 +7,8 @@
 asdf のプラグインをインストールする
 
 ```bash
-asdf plugin-add hadolint \
+asdf plugin-add direnv \
+  ; asdf plugin-add hadolint \
   ; asdf plugin-add nodejs \
   ; asdf plugin-add python
 ```
