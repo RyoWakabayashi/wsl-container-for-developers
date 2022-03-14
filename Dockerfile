@@ -141,4 +141,9 @@ RUN echo 'service docker status > /dev/null 2>&1' >> ~/.zshrc && \
     echo '  sudo service docker start' >> ~/.zshrc && \
     echo 'fi' >> ~/.zshrc
 
+COPY scripts ${HOME}/scripts
+
+RUN chmod +x ${HOME}/scripts/copy_git_config.sh && \
+    chmod +x ${HOME}/scripts/copy_ssh_config.sh
+
 WORKDIR ${HOME}

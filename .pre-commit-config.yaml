@@ -48,3 +48,9 @@ repos:
           - eslint-plugin-node@11.1.0
           - eslint-plugin-promise@6.0.0
         files: \.(js)$
+
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 2.1.6
+    hooks:
+      - id: shellcheck
+        files: \.sh$
