@@ -67,8 +67,7 @@ RUN groupadd -g $GID $GROUPNAME && \
     useradd -l -m -s /bin/bash -u $UID -g $GID $USERNAME && \
     gpasswd -a ${USER} sudo && \
     echo "${USER}:${PW}" | chpasswd && \
-    sed -i.bak -r s#${HOME}:\(.+\)#${HOME}:/bin/bash# /etc/passwd && \
-    sed -i.bak -r s#${HOME}:\(.+\)#${HOME}:/usr/local/bin/zsh# /etc/passwd && \
+    sed -i.bak -r s#${HOME}:\(.+\)#${HOME}:/bin/zsh# /etc/passwd && \
     echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Install zsh
