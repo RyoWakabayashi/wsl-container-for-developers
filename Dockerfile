@@ -24,6 +24,12 @@ RUN :  \
     echo 'Acquire::https:proxy "'${https_proxy}'";'; \
     } | tee /etc/apt/apt.conf
 
+# Set root proxy
+RUN echo "export http_proxy=$http_proxy" >> ~/.bashrc && \
+    echo "export https_proxy=$http_proxy" >> ~/.bashrc && \
+    echo "export HTTP_PROXY=$http_proxy" >> ~/.bashrc && \
+    echo "export HTTPS_PROXY=$http_proxy" >> ~/.bashrc
+
 # Install essentials
 # hadolint ignore=DL3008
 RUN apt-get update -q && \
