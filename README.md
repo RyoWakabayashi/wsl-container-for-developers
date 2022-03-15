@@ -98,13 +98,13 @@ docker-compose up -d
 コンテナ内に入って動作確認する
 
 ```bash
-docker exec -it wsl-container-for-developer-dev-1 zsh
+docker exec -it wsl-container-for-developers-dev-1 zsh
 ```
 
 コンテナのエクスポート
 
 ```bash
-docker export wsl-container-for-developer-dev-1 -o dev.tar.gz
+docker export wsl-container-for-developers-dev-1 -o dev.tar.gz
 ```
 
 コンテナの停止・削除
