@@ -195,6 +195,12 @@ git config user.name
 git config user.email
 ```
 
+## WSL への VSCode 拡張機能のインストール
+
+```bash
+./scripts/install_vscode_extensions.sh
+```
+
 [asdf]: https://github.com/asdf-vm/asdf
 [docker]: https://www.docker.com/
 [docker-compose]: https://docs.docker.jp/compose/toc.html

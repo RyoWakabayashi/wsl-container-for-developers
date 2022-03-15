@@ -147,6 +147,7 @@ RUN echo 'service docker status > /dev/null 2>&1' >> ~/.zshrc && \
     echo 'fi' >> ~/.zshrc
 
 COPY --chown=$UID:$GID scripts ${HOME}/scripts
+COPY --chown=$UID:$GID configs ${HOME}/configs
 
 RUN find ${HOME}/scripts -type f -name "*.sh" -print0 | \
     xargs -0 chmod +x
