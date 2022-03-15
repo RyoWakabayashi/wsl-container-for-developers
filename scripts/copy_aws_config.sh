@@ -30,7 +30,27 @@ copy_aws_files() {
 
 main() {
 
+    while getopts h opt; do
+        case $opt in
+            h)
+                display_usage
+            ;;
+            \?)
+                whoopsie "Invalid option!"
+            ;;
+        esac
+    done
+
     copy_aws_files
+
+}
+
+whoopsie() {
+
+    local message=$1
+
+    echo "${message} Aborting..."
+    exit 192
 
 }
 
