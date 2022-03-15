@@ -2,6 +2,7 @@ version: "3"
 
 services:
   dev:
+    container_name: dev
     build:
       context: .
       args:
