@@ -118,11 +118,15 @@ docker-compose down
 以降は WSL を起動する Windows 上の PowerShell ターミナルで実行する
 
 ```ps
-mkdir ~/AppData/dev
+wsl --import dev $HOME/AppData/dev ./dev.tar.gz
 ```
 
+コンテナ (WSL のディストリビューション) を削除する場合は以下のコマンドを実行する
+
+入れ替える場合は削除後に再度インポートする
+
 ```ps
-wsl --import dev ~/AppData/dev dev.tar.gz
+wsl --unregister dev
 ```
 
 ## WSL の設定
@@ -142,6 +146,53 @@ cp ./config/.wslconfig ~/.wslconfig
 
 ```ps
 wsl -d dev
+```
+
+## WSL への設定情報のコピー
+
+Windows の設定情報を WSL 上にコピーする
+
+### AWS の設定情報
+
+```bash
+./scripts/copy_aws_config.sh
+```
+
+AWS に接続できることを確認する
+
+```bash
+aws sts get-caller-identity
+```
+
+### SSH の設定情報
+
+```bash
+./scripts/copy_ssh_config.sh
+```
+
+パスフレーズを設定している場合、入力を求められる
+
+```bash
+Enter passphrase for /home/ubuntu/.ssh/<秘密鍵ファイル>:
+```
+
+SSH 接続できることを確認する
+
+```bash
+ssh github.com
+```
+
+### Git の設定情報
+
+```bash
+./scripts/copy_git_config.sh
+```
+
+Git の設定情報を確認する
+
+```bash
+git config user.name
+git config user.email
 ```
 
 [asdf]: https://github.com/asdf-vm/asdf

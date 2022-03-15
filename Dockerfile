@@ -157,7 +157,8 @@ USER ${USER}
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # SSH Agent
-RUN echo "eval $(ssh-agent)" >> ~/.zshrc
+# hadolint ignore=SC2016
+RUN echo 'eval $(ssh-agent)' >> ~/.zshrc
 
 # Set user proxy
 RUN echo "export http_proxy=$http_proxy" >> ~/.zshrc && \
