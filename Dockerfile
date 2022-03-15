@@ -126,6 +126,27 @@ RUN export DOCKER_DEFAULT=/etc/default/docker && \
     echo "export http_proxy=$http_proxy" >> $DOCKER_DEFAULT && \
     echo "export https_proxy=$http_proxy" >> $DOCKER_DEFAULT
 
+# Install GitHub CLI
+# hadolint ignore=DL3008
+RUN export GITHUB_GPG_KEY=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    export GITHUB_URL=https://cli.github.com/packages &&\
+    curl -fsSL "${GITHUB_URL}/githubcli-archive-keyring.gpg" | \
+    dd of="${GITHUB_GPG_KEY}" && \
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=${GITHUB_GPG_KEY}] ${GITHUB_URL} stable main" | \
+    tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
+    apt-get update -q && \
+    apt-get install --no-install-recommends -y gh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install AWS CLI
+# hadolint ignore=DL3059
+RUN export ZIP_FILE=./awscliv2.zip && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "${ZIP_FILE}" && \
+    unzip "${ZIP_FILE}" && \
+    ./aws/install
+
 # Add WSL config
 RUN echo "[user]" >> /etc/wsl.conf && \
     echo "default=${USER}" >> /etc/wsl.conf
@@ -134,6 +155,9 @@ USER ${USER}
 
 # Install oh-my-zsh
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# SSH Agent
+RUN echo "eval $(ssh-agent)" >> ~/.zshrc
 
 # Set user proxy
 RUN echo "export http_proxy=$http_proxy" >> ~/.zshrc && \
@@ -153,30 +177,10 @@ RUN mkdir ~/.docker && \
     echo "  }" >> $DOCKER_CONFIG && \
     echo "}" >> $DOCKER_CONFIG
 
-# Install Homebrew
-# hadolint ignore=DL3059
-RUN /bin/bash -c \
-    "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && \
-    echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.zshrc
-
-ENV PATH "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin+:$PATH"
-
-# SSH Agent
-RUN echo "eval $(ssh-agent)" >> ~/.zshrc
-
-# Install AWS CLI
-# hadolint ignore=DL3059
-RUN brew install awscli
-
 # Install ASDF
 # hadolint ignore=DL3059
-RUN brew install asdf && \
-    echo "source $(brew --prefix asdf)/asdf.sh" >> ~/.zshrc
-
-# Install GitHub CLI
-# hadolint ignore=DL3059
-RUN brew install gh
+RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf && \
+    echo ". $HOME/.asdf/asdf.sh" >> ~/.zshrc
 
 # Run Docker on login
 RUN echo 'service docker status > /dev/null 2>&1' >> ~/.zshrc && \
@@ -184,9 +188,9 @@ RUN echo 'service docker status > /dev/null 2>&1' >> ~/.zshrc && \
     echo '  sudo service docker start' >> ~/.zshrc && \
     echo 'fi' >> ~/.zshrc
 
-COPY scripts ${HOME}/scripts
+COPY --chown=$UID:$GID scripts ${HOME}/scripts
 
-RUN chmod +x ${HOME}/scripts/copy_git_config.sh && \
-    chmod +x ${HOME}/scripts/copy_ssh_config.sh
+RUN find ${HOME}/scripts -type f -name "*.sh" -print0 | \
+    xargs -0 chmod +x
 
 WORKDIR ${HOME}
