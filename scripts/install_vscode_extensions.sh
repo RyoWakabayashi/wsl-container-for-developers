@@ -9,7 +9,7 @@ display_usage() {
 
     cat <<EOE
 
-    Git 設定を WSL 上にコピーする
+    VSCode の拡張機能を一括インストールする
 
     構文: ./${ME}
 
@@ -19,11 +19,9 @@ EOE
 
 }
 
-copy_git_files() {
+install_extensions() {
 
-    input_file="$(wslpath "$(wslvar USERPROFILE)")"/.gitconfig
-
-    cp "${input_file}" ~/
+    xargs -n1 code --install-extension < ./configs/vscode_extensions.txt
 
 }
 
@@ -40,7 +38,7 @@ main() {
         esac
     done
 
-    copy_git_files
+    install_extensions
 
 }
 

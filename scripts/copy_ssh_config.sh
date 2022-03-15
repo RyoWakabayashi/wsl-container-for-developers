@@ -26,6 +26,7 @@ copy_ssh_files() {
     cp -r "${input_dir}" ~/
 
 }
+
 # shellcheck disable=SC2038
 set_permissions() {
 
@@ -33,6 +34,7 @@ set_permissions() {
         xargs chmod 600 &> /dev/null
 
 }
+
 # shellcheck disable=SC2154
 replace_configs() {
 
@@ -56,12 +58,33 @@ add_keys_to_agent() {
         xargs ssh-add &> /dev/null
 
 }
+
 main() {
+
+    while getopts h opt; do
+        case $opt in
+            h)
+                display_usage
+            ;;
+            \?)
+                whoopsie "Invalid option!"
+            ;;
+        esac
+    done
 
     copy_ssh_files
     set_permissions
     replace_configs
     add_keys_to_agent
+
+}
+
+whoopsie() {
+
+    local message=$1
+
+    echo "${message} Aborting..."
+    exit 192
 
 }
 
