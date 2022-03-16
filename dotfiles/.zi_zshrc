@@ -1,0 +1,92 @@
+# ---------------------------------------------------------
+# Enable Powerlevel10k
+# ---------------------------------------------------------
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+zi_home="${HOME}/.zi"
+
+source "${zi_home}/bin/zi.zsh"
+
+autoload -Uz _zi
+
+(( ${+_comps} )) && _comps[zi]=_zi
+
+source "${HOME}/.zi_plugins"
+
+# ---------------------------------------------------------
+# completion
+# ---------------------------------------------------------
+
+# コマンド補完
+autoload -Uz compinit && compinit
+
+# 小文字でも大文字にマッチ
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# 補完候補をTabや矢印で選択可能
+zstyle ':completion:*:default' menu select=1
+
+# ---------------------------------------------------------
+# hight-light
+# ---------------------------------------------------------
+
+# サジェストの色変更
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=244"
+
+# lsコマンドで色分けする
+zstyle ':completion:*' list-colors $LSCOLORS
+
+# ---------------------------------------------------------
+# peco
+# ---------------------------------------------------------
+
+# コマンド履歴検索 ctrl+r
+function peco-history-selection() {
+  BUFFER=`history -n 1 | tac  | awk '!a[$0]++' | peco`
+  CURSOR=$#BUFFER
+  zle reset-prompt
+}
+zle -N peco-history-selection
+bindkey '^R' peco-history-selection
+
+# コマンド履歴からディレクトリ検索・移動 ctrl+e
+if [[ -n $(echo ${^fpath}/chpwd_recent_dirs(N)) && -n $(echo ${^fpath}/cdr(N)) ]]; then
+  autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+  add-zsh-hook chpwd chpwd_recent_dirs
+  zstyle ':completion:*' recent-dirs-insert both
+  zstyle ':chpwd:*' recent-dirs-default true
+  zstyle ':chpwd:*' recent-dirs-max 1000
+  zstyle ':chpwd:*' recent-dirs-file "$HOME/.cache/chpwd-recent-dirs"
+fi
+function peco-cdr () {
+  local selected_dir="$(cdr -l | sed 's/^[0-9]* *//' | peco)"
+  if [ -n "$selected_dir" ]; then
+    BUFFER="cd ${selected_dir}"
+    zle accept-line
+  fi
+}
+zle -N peco-cdr
+bindkey '^E' peco-cdr
+
+# カレントディレクトリ以下のディレクトリ検索・移動 ctrl+x
+function find_cd() {
+  local selected_dir=$(find . -type d | peco)
+  if [ -n "$selected_dir" ]; then
+    BUFFER="cd ${selected_dir}"
+    zle accept-line
+  fi
+}
+zle -N find_cd
+bindkey '^X' find_cd
+
+# ---------------------------------------------------------
+# prompt
+# ---------------------------------------------------------
+
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

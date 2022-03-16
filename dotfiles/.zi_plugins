@@ -1,0 +1,21 @@
+# history
+zi ice wait lucid
+zi light zsh-users/zsh-history-substring-search
+
+# completion
+zi ice wait lucid
+zi light zsh-users/zsh-completions
+
+# completion
+zi ice wait lucid
+zi light zsh-users/zsh-autosuggestions
+
+zi ice wait lucid
+zi light zsh-users/zsh-syntax-highlighting
+
+zi ice wait lucid
+zi light chrissicool/zsh-256color
+
+# theme
+zi ice depth=1
+zi light romkatv/powerlevel10k
