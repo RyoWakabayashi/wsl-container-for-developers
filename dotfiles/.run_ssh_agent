@@ -5,12 +5,12 @@ SSH_ENV=~/.ssh-env-vars
 
 if [ "2" -gt $LINES ] ; then
     ssh-agent -s > "${SSH_ENV}"
-    . "${SSH_ENV}"
+    . "${SSH_ENV}" > /dev/null
 else
     if [ -f "${SSH_ENV}" ]; then
-        . "${SSH_ENV}"
+        . "${SSH_ENV}" > /dev/null
     else
         ssh-agent -s > "${SSH_ENV}"
-        . "${SSH_ENV}"
+        . "${SSH_ENV}" > /dev/null
     fi
 fi

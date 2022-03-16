@@ -223,7 +223,7 @@ RUN echo '' >> ~/.zshrc && \
     echo '# Start Docker service' >> ~/.zshrc && \
     echo 'service docker status > /dev/null 2>&1' >> ~/.zshrc && \
     echo 'if [ $? != 0 ]; then' >> ~/.zshrc && \
-    echo '  sudo service docker start' >> ~/.zshrc && \
+    echo '  sudo service docker start > /dev/null' >> ~/.zshrc && \
     echo 'fi' >> ~/.zshrc
 
 # SSH Agent
