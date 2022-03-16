@@ -161,6 +161,9 @@ COPY --chown=$UID:$GID scripts ${HOME}/scripts
 COPY --chown=$UID:$GID configs ${HOME}/configs
 COPY --chown=$UID:$GID dotfiles ${HOME}
 
+RUN find ${HOME}/scripts -type f -name "*.sh" -print0 | \
+    xargs -0 chmod +x
+
 WORKDIR ${HOME}
 
 # Install ZI
@@ -184,7 +187,4 @@ RUN echo '' >> ~/.zshrc && \
 # hadolint ignore=SC2016
 RUN echo "" >> ~/.zshrc && \
     echo "# Start ssh-agent" >> ~/.zshrc && \
-    echo 'eval $(ssh-agent)' >> ~/.zshrc
-
-RUN find ${HOME}/scripts -type f -name "*.sh" -print0 | \
-    xargs -0 chmod +x
+    echo 'source ~/.run_ssh_agent' >> ~/.zshrc

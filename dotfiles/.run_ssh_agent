@@ -1,0 +1,15 @@
+# If ssh-agent is not running, start it and add all keys
+
+LINES=$(ps aux | grep ssh-agent | wc -l)
+SSH_ENV=~/.ssh-env-vars
+
+if [ -f "${SSH_ENV}" ]; then
+    if [ "2" -gt $LINES ] ; then
+        ssh-agent -s > "${SSH_ENV}"
+        . "${SSH_ENV}"
+    else
+        . "${SSH_ENV}"
+    fi
+else
+    ssh-agent -s > "${SSH_ENV}"
+fi
