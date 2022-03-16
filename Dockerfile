@@ -129,9 +129,7 @@ RUN export ZIP_FILE=./awscliv2.zip && \
     unzip "${ZIP_FILE}" && \
     ./aws/install
 
-# Add WSL config
-RUN echo "[user]" >> /etc/wsl.conf && \
-    echo "default=${USER}" >> /etc/wsl.conf
+COPY configs/wsl.conf /etc/wsl.conf
 
 USER ${USER}
 
@@ -158,7 +156,6 @@ RUN . "${HOME}/.asdf/asdf.sh" && \
     pip install --upgrade --no-cache-dir pip
 
 COPY --chown=$UID:$GID scripts ${HOME}/scripts
-COPY --chown=$UID:$GID configs ${HOME}/configs
 COPY --chown=$UID:$GID dotfiles ${HOME}
 
 RUN find ${HOME}/scripts -type f -name "*.sh" -print0 | \
@@ -188,3 +185,9 @@ RUN echo '' >> ~/.zshrc && \
 RUN echo "" >> ~/.zshrc && \
     echo "# Start ssh-agent" >> ~/.zshrc && \
     echo 'source ~/.run_ssh_agent' >> ~/.zshrc
+
+# VSCode PATH
+# hadolint ignore=SC2016
+RUN echo "" >> ~/.zshrc && \
+    echo "# Set VSCode PATH" >> ~/.zshrc && \
+    echo 'export PATH="${PATH}:$(wslpath $(wslvar USERPROFILE))/AppData/Local/Programs/Microsoft VS Code/bin"' >> ~/.zshrc
