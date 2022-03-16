@@ -73,6 +73,9 @@ RUN apt-get update -q && \
     curl \
     wget \
     vim \
+    gawk \
+    fzf \
+    peco \
     stow && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -84,6 +87,10 @@ RUN apt-get update -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     update-locale LANG=ja_JP.UTF8
+
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:ja
+ENV LC_ALL=ja_JP.UTF-8
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -153,13 +160,6 @@ RUN echo "[user]" >> /etc/wsl.conf && \
 
 USER ${USER}
 
-# Install oh-my-zsh
-RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-# SSH Agent
-# hadolint ignore=SC2016
-RUN echo 'eval $(ssh-agent)' >> ~/.zshrc
-
 # Set user proxy
 RUN echo "export http_proxy=$http_proxy" >> ~/.zshrc && \
     echo "export https_proxy=$http_proxy" >> ~/.zshrc && \
@@ -181,18 +181,53 @@ RUN mkdir ~/.docker && \
 # Install ASDF
 # hadolint ignore=DL3059
 RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf && \
+    echo "" >> ~/.zshrc && \
+    echo "# Enable ASDF" >> ~/.zshrc && \
     echo ". $HOME/.asdf/asdf.sh" >> ~/.zshrc
 
+# Install Node.js via ASDF
+# hadolint ignore=SC1091
+RUN . "${HOME}/.asdf/asdf.sh" && \
+    asdf plugin add nodejs && \
+    asdf install nodejs 17.6.0 && \
+    asdf global nodejs 17.6.0
+
+# Install Python via ASDF
+# hadolint ignore=SC1091,DL3013
+RUN . "${HOME}/.asdf/asdf.sh" && \
+    asdf plugin add python && \
+    asdf install python 3.10.2 && \
+    asdf global python 3.10.2 && \
+    pip install --upgrade --no-cache-dir pip
+
+COPY --chown=$UID:$GID scripts ${HOME}/scripts
+COPY --chown=$UID:$GID configs ${HOME}/configs
+COPY --chown=$UID:$GID dotfiles ${HOME}
+
+WORKDIR ${HOME}
+
+# Install ZI
+RUN export zi_home="${HOME}/.zi" && \
+    mkdir -p $zi_home && \
+    git clone https://github.com/z-shell/zi.git "${zi_home}/bin" && \
+    echo '' >> ${HOME}/.zshrc && \
+    echo 'source ~/.zi_zshrc' >> ${HOME}/.zshrc && \
+    export TERM=xterm && \
+    zsh -ic "source ${HOME}/.zi_plugins"
+
 # Run Docker on login
-RUN echo 'service docker status > /dev/null 2>&1' >> ~/.zshrc && \
+RUN echo '' >> ~/.zshrc && \
+    echo '# Start Docker service' >> ~/.zshrc && \
+    echo 'service docker status > /dev/null 2>&1' >> ~/.zshrc && \
     echo 'if [ $? != 0 ]; then' >> ~/.zshrc && \
     echo '  sudo service docker start' >> ~/.zshrc && \
     echo 'fi' >> ~/.zshrc
 
-COPY --chown=$UID:$GID scripts ${HOME}/scripts
-COPY --chown=$UID:$GID configs ${HOME}/configs
+# SSH Agent
+# hadolint ignore=SC2016
+RUN echo "" >> ~/.zshrc && \
+    echo "# Start ssh-agent" >> ~/.zshrc && \
+    echo 'eval $(ssh-agent)' >> ~/.zshrc
 
 RUN find ${HOME}/scripts -type f -name "*.sh" -print0 | \
     xargs -0 chmod +x
-
-WORKDIR ${HOME}
