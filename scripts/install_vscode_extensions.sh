@@ -21,7 +21,7 @@ EOE
 
 install_extensions() {
 
-    xargs -n1 code --install-extension < ./configs/vscode_extensions.txt
+    xargs -n1 code --install-extension < ~/.vscode_extensions
 
 }
 
