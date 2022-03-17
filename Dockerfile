@@ -14,8 +14,11 @@ ENV PW ubuntu
 # hadolint ignore=DL3008
 RUN apt-get update -q && \
     apt-get install --no-install-recommends -y \
+    automake \
+    autoconf \
     build-essential \
     file \
+    fontconfig \
     procps \
     gnupg \
     lsb-release \
@@ -26,8 +29,10 @@ RUN apt-get update -q && \
     libgdbm-dev \
     liblzma-dev \
     libncursesw5-dev \
+    libncurses5-dev \
     libsqlite3-dev \
     libssl-dev \
+    libxml2-utils \
     zlib1g-dev \
     uuid-dev \
     tk-dev\
@@ -56,6 +61,7 @@ RUN apt-get update -q && \
     gawk \
     fzf \
     peco \
+    jq \
     stow && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
