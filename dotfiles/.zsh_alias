@@ -1,0 +1,20 @@
+# ls
+alias ls='ls -fh --color=auto'
+alias la='ls -A'
+alias ll='ls -lA'
+alias l='clear && ll'
+
+# grep
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# cd
+alias ..='cd ..'
+alias ..2='cd ../..'
+alias ..3='cd ../../..'
+alias ..4='cd ../../../..'
+
+# cat to bat
+alias bat='batcat'
+alias cat='bat'

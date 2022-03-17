@@ -77,6 +77,7 @@ RUN apt-get update -q && \
     git \
     curl \
     wget \
+    bat \
     vim \
     gawk \
     fzf \
@@ -220,16 +221,6 @@ RUN export zi_home="${HOME}/.zi" && \
     echo 'source ~/.zi_zshrc' >> ${HOME}/.zshrc && \
     export TERM=xterm && \
     zsh -ic "source ${HOME}/.zi_plugins"
-
-# History settings
-RUN echo '' >> ~/.zshrc && \
-    echo '# History settings' >> ~/.zshrc && \
-    echo "export HISTFILE=${HOME}/.zsh_history" >> ~/.zshrc && \
-    echo 'export HISTSIZE=1000' >> ~/.zshrc && \
-    echo 'export SAVEHIST=100000' >> ~/.zshrc && \
-    echo 'setopt hist_ignore_dups' >> ~/.zshrc && \
-    echo 'setopt hist_ignore_all_dups' >> ~/.zshrc && \
-    echo 'setopt EXTENDED_HISTORY' >> ~/.zshrc
 
 # Run Docker on login
 RUN echo '' >> ~/.zshrc && \
