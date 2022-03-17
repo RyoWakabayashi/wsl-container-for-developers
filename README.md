@@ -95,12 +95,6 @@ docker-compose build
 docker-compose up -d
 ```
 
-コンテナ内に入って動作確認する
-
-```bash
-docker exec -it dev zsh
-```
-
 コンテナのエクスポート
 
 ```bash
@@ -111,6 +105,21 @@ docker export dev -o dev.tar.gz
 
 ```bash
 docker-compose down
+```
+
+## コンテナの動作確認
+
+コンテナ内に AWS 設定や Git 設定を引き継ぎたい場合、以下のように起動する
+
+```bash
+docker-compose \
+  -f docker-compose.yml \
+  -f docker-compose.exec.yml \
+  up -d
+```
+
+```bash
+docker exec -it dev zsh
 ```
 
 ## コンテナのインポート

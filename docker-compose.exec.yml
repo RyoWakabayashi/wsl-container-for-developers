@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  dev:
+    volumes:
+      - .:/workspace:cached
+      - $HOME/.aws/credentials:/home/ubuntu/.aws/credentials:ro
+      - $HOME/.gitconfig:/etc/gitconfig

@@ -240,4 +240,8 @@ RUN echo "" >> ~/.zshrc && \
 # hadolint ignore=SC2016
 RUN echo "" >> ~/.zshrc && \
     echo "# Set VSCode PATH" >> ~/.zshrc && \
-    echo 'export PATH="${PATH}:$(wslpath $(wslvar USERPROFILE))/AppData/Local/Programs/Microsoft VS Code/bin"' >> ~/.zshrc
+    echo 'grep -q WSL /proc/version &&' >> ~/.zshrc && \
+    echo '    export IN_WSL=true || export IN_WSL=false' >> ~/.zshrc && \
+    echo '$IN_WSL && \' >> ~/.zshrc && \
+    echo '    export WINHOME="$(wslpath $(wslvar USERPROFILE))" &&' >> ~/.zshrc && \
+    echo '    export PATH="${PATH}:${WINHOME}/AppData/Local/Programs/Microsoft VS Code/bin"' >> ~/.zshrc
