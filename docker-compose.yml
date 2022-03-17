@@ -5,8 +5,4 @@ services:
     container_name: dev
     build: .
     tty: true
-    volumes:
-      - .:/workspace:cached
-      - $HOME/.aws/credentials:/home/ubuntu/.aws/credentials:ro
-      - $HOME/.gitconfig:/etc/gitconfig
     command: /bin/sh -c "while sleep 1000; do :; done"
