@@ -19,9 +19,32 @@ autoload -Uz _zi
 
 source "${HOME}/.zi_plugins"
 
+source "${HOME}/.zsh_alias"
+
+# ---------------------------------------------------------
+# TIME ZONE
+# ---------------------------------------------------------
+
+export TZ="Asia/Tokyo"
+
+# ---------------------------------------------------------
+# History
+# ---------------------------------------------------------
+
+export HISTFILE=${HOME}/.zsh_history
+export HISTSIZE=1000
+export SAVEHIST=100000
+setopt hist_ignore_all_dups
+setopt hist_reduce_blanks
+setopt share_history
+setopt EXTENDED_HISTORY
+
 # ---------------------------------------------------------
 # completion
 # ---------------------------------------------------------
+
+setopt auto_pushd
+setopt correct
 
 # コマンド補完
 autoload -Uz compinit && compinit
