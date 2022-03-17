@@ -178,6 +178,16 @@ RUN export zi_home="${HOME}/.zi" && \
     export TERM=xterm && \
     zsh -ic "source ${HOME}/.zi_plugins"
 
+# History settings
+RUN echo '' >> ~/.zshrc && \
+    echo '# History settings' >> ~/.zshrc && \
+    echo "export HISTFILE=${HOME}/.zsh_history" >> ~/.zshrc && \
+    echo 'export HISTSIZE=1000' >> ~/.zshrc && \
+    echo 'export SAVEHIST=100000' >> ~/.zshrc && \
+    echo 'setopt hist_ignore_dups' >> ~/.zshrc && \
+    echo 'setopt hist_ignore_all_dups' >> ~/.zshrc && \
+    echo 'setopt EXTENDED_HISTORY' >> ~/.zshrc
+
 # Run Docker on login
 RUN echo '' >> ~/.zshrc && \
     echo '# Start Docker service' >> ~/.zshrc && \
