@@ -3,14 +3,31 @@
 GREP_RESULTS_COUNT=$(ps aux | grep ssh-agent | wc -l)
 SSH_ENV=~/.ssh-env-vars
 
+function start_agent() {
+
+    . "${SSH_ENV}" > /dev/null
+
+}
+
+function add_keys() {
+
+    find ~/.ssh/ -type f -exec grep -l "PRIVATE" {} + | \
+        xargs ssh-add &> /dev/null
+
+}
+
 if [ "2" -gt $LINES ] ; then
     ssh-agent -s > "${SSH_ENV}"
-    . "${SSH_ENV}" > /dev/null
+    start_agent
+    add_keys
 else
     if [ -f "${SSH_ENV}" ]; then
-        . "${SSH_ENV}" > /dev/null
+        start_agent
     else
         ssh-agent -s > "${SSH_ENV}"
-        . "${SSH_ENV}" > /dev/null
+        start_agent
+        add_keys
     fi
 fi
+
+export GPG_TTY=$TTY
