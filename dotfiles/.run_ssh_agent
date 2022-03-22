@@ -29,3 +29,5 @@ else
         add_keys
     fi
 fi
+
+export GPG_TTY=$TTY
