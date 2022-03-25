@@ -11,12 +11,13 @@ function start_agent() {
 
 function add_keys() {
 
-    find ~/.ssh/ -type f -exec grep -l "PRIVATE" {} + | \
+    [ -d ~/.ssh ] && \
+        find ~/.ssh/ -type f -exec grep -l "PRIVATE" {} + | \
         xargs ssh-add &> /dev/null
 
 }
 
-if [ "2" -gt $LINES ] ; then
+if [ "2" -gt $GREP_RESULTS_COUNT ] ; then
     ssh-agent -s > "${SSH_ENV}"
     start_agent
     add_keys
