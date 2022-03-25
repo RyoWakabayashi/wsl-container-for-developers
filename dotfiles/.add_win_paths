@@ -1,0 +1,7 @@
+grep -q WSL /proc/version && \
+    export IN_WSL=true || export IN_WSL=false
+
+$IN_WSL && \
+    export WIN_HOME="$(wslpath $(wslvar USERPROFILE))" && \
+    export CODE_PAH="$(wslpath "$(wslvar Path | tr ";" "\n" | grep "VS Code")")" && \
+    export PATH="${PATH}:${CODE_PAH}"
